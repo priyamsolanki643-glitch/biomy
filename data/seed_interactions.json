@@ -1,0 +1,18 @@
+[
+  {
+    "source": "Piperine",
+    "target": "Warfarin",
+    "enzyme": "CYP2C9",
+    "effect": "potential inhibition",
+    "severity": "unknown",
+    "source_reference": "Verify against a current clinical interaction database before use."
+  },
+  {
+    "source": "Ashwagandha",
+    "target": "Thyroid hormone",
+    "enzyme": "thyroid axis",
+    "effect": "may increase thyroid hormone levels",
+    "severity": "moderate",
+    "source_reference": "Example screening entry; requires clinician and literature review."
+  }
+]
