@@ -4,8 +4,14 @@ import math
 class BioCalculations:
     @staticmethod
     def egfr_ckd_epi_2021(creatinine_mg_dl: float, age: int, female: bool) -> float:
-        if creatinine_mg_dl <= 0 or age <= 0:
-            raise ValueError("creatinine and age must be positive")
+        if not math.isfinite(creatinine_mg_dl):
+            raise ValueError("creatinine must be finite")
+        if creatinine_mg_dl <= 0:
+            raise ValueError("creatinine must be positive and non-zero")
+        if isinstance(age, bool) or not isinstance(age, int):
+            raise ValueError("age must be an integer")
+        if age < 18 or age > 120:
+            raise ValueError("Adult CKD-EPI equation is validated for ages 18 to 120")
         kappa = 0.7 if female else 0.9
         alpha = -0.241 if female else -0.302
         sex_factor = 1.012 if female else 1.0
@@ -14,8 +20,16 @@ class BioCalculations:
 
     @staticmethod
     def creatinine_cockcroft_gault(creatinine_mg_dl: float, age: int, weight_kg: float, female: bool) -> float:
-        if creatinine_mg_dl <= 0 or age <= 0 or weight_kg <= 0:
-            raise ValueError("creatinine, age, and weight must be positive")
+        if not math.isfinite(creatinine_mg_dl) or not math.isfinite(weight_kg):
+            raise ValueError("creatinine and weight must be finite")
+        if creatinine_mg_dl <= 0 or weight_kg <= 0:
+            raise ValueError("creatinine and weight must be positive")
+        if weight_kg > 500:
+            raise ValueError("weight exceeds supported adult range")
+        if isinstance(age, bool) or not isinstance(age, int):
+            raise ValueError("age must be an integer")
+        if age < 18 or age > 120:
+            raise ValueError("Cockcroft-Gault formula is validated for adult ages 18 to 120")
         result = ((140 - age) * weight_kg) / (72 * creatinine_mg_dl)
         return result * 0.85 if female else result
 
@@ -33,8 +47,10 @@ class BioCalculations:
 
     @staticmethod
     def hepatocyte_r_ratio(alt: float, alt_uln: float, alp: float, alp_uln: float) -> float:
-        if alt_uln <= 0 or alp_uln <= 0 or alt < 0 or alp < 0:
-            raise ValueError("enzyme values must be non-negative and ULN values positive")
+        if any(not math.isfinite(value) for value in (alt, alt_uln, alp, alp_uln)):
+            raise ValueError("R-ratio values must be finite")
+        if alt < 0 or alt_uln <= 0 or alp <= 0 or alp_uln <= 0:
+            raise ValueError("ALT/ALP must be non-negative, and ALP/ULN values must be strictly positive non-zero")
         return (alt / alt_uln) / (alp / alp_uln)
 
     @staticmethod

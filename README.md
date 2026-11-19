@@ -26,6 +26,18 @@ auditable report interface.
 - Streamlit provides separate lab, prescription, interaction, and evidence views.
 - The seed interaction database is a demo dataset, not a validated clinical knowledge base.
 
+## Evidence and scope fixes
+
+- Graph screens require pair-specific evidence; shared-enzyme matches are labeled indirect mechanisms.
+- Prescription parsing processes each line independently so dose and frequency fields do not bleed across medicines.
+- Lab values are excluded from exposure parsing.
+- Adult clinical equations validate age and reject non-finite or out-of-range inputs.
+
+## TPSM status
+
+TPSM is intentionally not included in this implementation. Its future demo should use one
+published human interaction study, separately identified assumptions, and observed-versus-modeled points.
+
 ## Run
 
 ```powershell

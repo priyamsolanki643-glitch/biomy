@@ -88,28 +88,25 @@ with tab_interaction:
                 entries = json.load(handle)
             engine.add_many(Interaction(**entry) for entry in entries)
 
-            matches = engine.ripple_frontier([herb])[herb]
-            matching_records = [
-                record
-                for record in matches
-                if drug.lower() in record["node"].lower()
-                or drug.lower() in record["from"].lower()
-            ]
+            result = engine.screen_pair(herb, drug)
 
-            if matching_records:
-                severities = {str(record["severity"]).lower() for record in matching_records}
-                if "high" in severities:
+            if result["status"] == "direct_evidence":
+                if result["severity"].lower() == "high":
                     st.error("High-severity evidence entry - professional pharmacist/clinician review.")
-                elif "moderate" in severities:
+                elif result["severity"].lower() == "moderate":
                     st.warning("Moderate-severity evidence entry - verify against current guidance.")
                 else:
                     st.info("Unknown or limited evidence - do not use as safety clearance.")
-
                 st.subheader("Evidence-grounded findings")
-                st.dataframe(matching_records, use_container_width=True)
+            elif result["status"] == "indirect_mechanism_only":
+                st.info("Indirect mechanism only - no direct pair-specific evidence in the seed database.")
+                st.subheader("Hypothetical mechanism")
             else:
                 st.success("No match in the current seed database.")
                 st.caption("No match means absence of evidence in this limited demo, not safety clearance.")
+
+            if result["status"] != "no_interaction_found":
+                st.dataframe([result], use_container_width=True)
 
             ranking = MetabolicPageRank().rank(engine.graph)
             top = sorted(ranking.items(), key=lambda item: item[1], reverse=True)[:5]

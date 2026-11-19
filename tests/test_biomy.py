@@ -1,4 +1,5 @@
 import math
+import pytest
 
 from biomy.ast_parser import BioASTParser
 from biomy.calculations import BioCalculations
@@ -27,10 +28,38 @@ def test_parser_handles_no_space_and_frequency():
     assert exposures[0].strength == 5.0
 
 
+def test_parser_keeps_frequency_with_its_own_line():
+    _, exposures = BioASTParser().parse(
+        "Warfarin 5 mg OD\nMidazolam 2 mg BD"
+    )
+    assert len(exposures) == 2
+    assert exposures[0].name.lower() == "warfarin"
+    assert exposures[0].route == "OD"
+    assert exposures[1].name.lower() == "midazolam"
+    assert exposures[1].route == "BD"
+
+
+def test_parser_does_not_treat_lab_value_as_exposure():
+    analytes, exposures = BioASTParser().parse("Creatinine: 1.2 mg/dL")
+    assert len(analytes) == 1
+    assert len(exposures) == 0
+
+
 def test_ckd_epi_returns_finite_positive_result():
     result = BioCalculations.egfr_ckd_epi_2021(1.2, 50, False)
     assert math.isfinite(result)
     assert result > 0
+
+
+@pytest.mark.parametrize("age", [1, 141])
+def test_ckd_epi_rejects_invalid_adult_age(age):
+    with pytest.raises(ValueError):
+        BioCalculations.egfr_ckd_epi_2021(1.0, age, False)
+
+
+def test_r_ratio_rejects_zero_alp():
+    with pytest.raises(ValueError):
+        BioCalculations.hepatocyte_r_ratio(40, 40, 0, 120)
 
 
 def test_ripple_frontier_finds_transitive_interactions():
@@ -39,6 +68,22 @@ def test_ripple_frontier_finds_transitive_interactions():
     engine.add_interaction(Interaction("CYP3A4", "Midazolam", "CYP3A4", "clearance decrease", "high", "REF-2"))
     frontier = engine.ripple_frontier(["Piperine"])
     assert any(record["node"] == "Midazolam" for record in frontier["Piperine"])
+
+
+def test_pair_screen_does_not_attach_wrong_herb_evidence():
+    engine = ClinicalRippleEngine()
+    engine.add_interaction(
+        Interaction(
+            "St. John's wort",
+            "Cyclosporine",
+            "CYP3A4",
+            "may decrease drug exposure",
+            "high",
+            "STJOHN-CYCLOSPORINE-REF",
+        )
+    )
+    result = engine.screen_pair("Piperine", "Cyclosporine")
+    assert result["status"] == "no_interaction_found"
 
 
 def test_scalar_projector_has_equal_scale_properties():
