@@ -19,6 +19,14 @@ def test_parser_extracts_analytes_and_exposures():
     assert exposures[0].strength == 5.0
 
 
+def test_parser_handles_no_space_and_frequency():
+    analytes, exposures = BioASTParser().parse("Tab. Warfarin 5mg OD")
+    assert len(analytes) == 0
+    assert len(exposures) == 1
+    assert exposures[0].name.lower() == "warfarin"
+    assert exposures[0].strength == 5.0
+
+
 def test_ckd_epi_returns_finite_positive_result():
     result = BioCalculations.egfr_ckd_epi_2021(1.2, 50, False)
     assert math.isfinite(result)

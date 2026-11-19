@@ -18,13 +18,27 @@ class ClinicalRippleEngine:
         self.graph = nx.DiGraph()
 
     def add_interaction(self, interaction: Interaction) -> None:
+        source = interaction.source.strip()
+        enzyme = interaction.enzyme.strip()
+        target = interaction.target.strip()
+        self.graph.add_node(source, kind="entity")
+        self.graph.add_node(enzyme, kind="enzyme")
+        self.graph.add_node(target, kind="drug_or_herb")
         self.graph.add_edge(
-            interaction.source,
-            interaction.target,
-            enzyme=interaction.enzyme,
+            source,
+            enzyme,
+            effect="modulates",
+            severity=interaction.severity,
+            source_reference=interaction.source_reference,
+            enzyme=enzyme,
+        )
+        self.graph.add_edge(
+            enzyme,
+            target,
             effect=interaction.effect,
             severity=interaction.severity,
             source_reference=interaction.source_reference,
+            enzyme=enzyme,
         )
 
     def add_many(self, interactions: Iterable[Interaction]) -> None:

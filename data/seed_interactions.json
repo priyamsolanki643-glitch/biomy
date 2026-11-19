@@ -3,9 +3,9 @@
     "source": "Piperine",
     "target": "Warfarin",
     "enzyme": "CYP2C9",
-    "effect": "potential inhibition",
-    "severity": "unknown",
-    "source_reference": "Verify against a current clinical interaction database before use."
+    "effect": "potential inhibition of metabolism",
+    "severity": "high",
+    "source_reference": "Clinical evidence required: verify Warfarin CYP2C9 interaction and INR monitoring in an authoritative database."
   },
   {
     "source": "Ashwagandha",
@@ -13,6 +13,86 @@
     "enzyme": "thyroid axis",
     "effect": "may increase thyroid hormone levels",
     "severity": "moderate",
-    "source_reference": "Example screening entry; requires clinician and literature review."
+    "source_reference": "Example screening entry; verify against current PubMed evidence and clinician guidance."
+  },
+  {
+    "source": "Piperine",
+    "target": "Midazolam",
+    "enzyme": "CYP3A4",
+    "effect": "possible increased exposure",
+    "severity": "moderate",
+    "source_reference": "Requires CYP3A4 literature and prescribing-information verification."
+  },
+  {
+    "source": "Grapefruit",
+    "target": "Atorvastatin",
+    "enzyme": "CYP3A4",
+    "effect": "may increase statin exposure",
+    "severity": "moderate",
+    "source_reference": "FDA drug interaction guidance and current prescribing information."
+  },
+  {
+    "source": "St. John's wort",
+    "target": "Cyclosporine",
+    "enzyme": "CYP3A4",
+    "effect": "may decrease drug exposure",
+    "severity": "high",
+    "source_reference": "FDA and EMA interaction guidance; transplant medicine clinician review required."
+  },
+  {
+    "source": "St. John's wort",
+    "target": "Warfarin",
+    "enzyme": "CYP2C9",
+    "effect": "may alter anticoagulant exposure",
+    "severity": "high",
+    "source_reference": "Verify INR and anticoagulant evidence against current clinical guidance."
+  },
+  {
+    "source": "Curcumin",
+    "target": "Warfarin",
+    "enzyme": "CYP2C9",
+    "effect": "potential pharmacodynamic or pharmacokinetic interaction",
+    "severity": "moderate",
+    "source_reference": "Evidence uncertain; verify case reports and clinical interaction databases."
+  },
+  {
+    "source": "Giloy",
+    "target": "Paracetamol",
+    "enzyme": "CYP2E1",
+    "effect": "hypothetical hepatic metabolic competition",
+    "severity": "unknown",
+    "source_reference": "Insufficient evidence for a clinical safety conclusion."
+  },
+  {
+    "source": "Guggul",
+    "target": "Diltiazem",
+    "enzyme": "CYP3A4",
+    "effect": "possible altered exposure",
+    "severity": "unknown",
+    "source_reference": "Requires primary clinical and pharmacokinetic literature verification."
+  },
+  {
+    "source": "Berberine",
+    "target": "Metformin",
+    "enzyme": "organic cation transporter 1",
+    "effect": "possible altered glucose-lowering exposure",
+    "severity": "moderate",
+    "source_reference": "Verify transporter evidence and glucose monitoring guidance."
+  },
+  {
+    "source": "Green tea",
+    "target": "Nadolol",
+    "enzyme": "OATP1A2",
+    "effect": "may reduce absorption",
+    "severity": "moderate",
+    "source_reference": "Verify against current drug-prescribing and transporter literature."
+  },
+  {
+    "source": "Ginseng",
+    "target": "Warfarin",
+    "enzyme": "CYP2C9",
+    "effect": "potential anticoagulant effect alteration",
+    "severity": "high",
+    "source_reference": "Verify INR and pharmacodynamic evidence with current clinical sources."
   }
 ]

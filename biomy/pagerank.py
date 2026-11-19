@@ -6,6 +6,8 @@ class MetabolicPageRank:
     def rank(self, graph: nx.DiGraph, weight: str = "weight") -> dict[str, float]:
         if graph.number_of_nodes() == 0:
             return {}
+        if weight not in nx.get_edge_attributes(graph, weight):
+            weight = None
         return nx.pagerank(graph, alpha=0.85, weight=weight)
 
     def bottlenecks(self, graph: nx.DiGraph, top_k: int = 3) -> list[tuple[str, float]]:

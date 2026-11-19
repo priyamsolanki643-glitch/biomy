@@ -17,6 +17,15 @@ auditable report interface.
 8. **Clearance parity checker**: dose and renal metric validation.
 9. **Auditable HUD**: structured findings, evidence, and disclaimer.
 
+## Current MVP features
+
+- Enzymes and transporters are first-class metabolic graph nodes.
+- Ripple traversal follows herb -> enzyme/transporter -> drug chains.
+- PageRank identifies graph bottlenecks.
+- Prescription text accepts compact doses such as `5mg` and common frequencies.
+- Streamlit provides separate lab, prescription, interaction, and evidence views.
+- The seed interaction database is a demo dataset, not a validated clinical knowledge base.
+
 ## Run
 
 ```powershell
