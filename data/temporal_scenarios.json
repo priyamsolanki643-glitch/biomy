@@ -1,0 +1,121 @@
+{
+  "metadata": {
+    "title": "BioMy Reproducible Temporal Validation Scenarios",
+    "version": "1.0.0",
+    "description": "Standardized benchmark scenarios for evaluating time-dependent PK/PD ODE integration, MBI recovery hysteresis, and non-linear accumulation."
+  },
+  "scenarios": [
+    {
+      "scenario_id": "scenario_a_warfarin_piperine_mbi",
+      "title": "Scenario A: Warfarin + Piperine MBI Recovery Hysteresis",
+      "description": "Daily Warfarin 5 mg with Piperine 20 mg initiated at t=48h and stopped at t=96h. Demonstrates slow CYP2C9/CYP3A4 recovery and post-discontinuation bleeding breach.",
+      "duration_h": 168.0,
+      "step_h": 0.5,
+      "drugs": ["Warfarin"],
+      "herbs": ["Piperine"],
+      "compartment_mode": "1-compartment",
+      "solver_method": "Radau",
+      "events": [
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 0.0},
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 24.0},
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 48.0},
+        {"name": "Piperine", "dose_mg": 20.0, "time_h": 48.0},
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 72.0},
+        {"name": "Piperine", "dose_mg": 20.0, "time_h": 72.0},
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 96.0},
+        {"name": "Piperine", "dose_mg": 20.0, "time_h": 96.0},
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 120.0},
+        {"name": "Warfarin", "dose_mg": 5.0, "time_h": 144.0}
+      ],
+      "expected_outcomes": {
+        "mbi_washout_delayed": true,
+        "toxicity_breach_expected": true,
+        "enzyme_recovery_lag_h": 40.0
+      }
+    },
+    {
+      "scenario_id": "scenario_b_phenytoin_curcumin_nonlinear",
+      "title": "Scenario B: Phenytoin Michaelis-Menten Nonlinear Elimination Saturation",
+      "description": "Phenytoin 300 mg daily co-administered with Curcumin 500 mg. Demonstrates runaway accumulation as concentration approaches Km (4.0 mg/L).",
+      "duration_h": 120.0,
+      "step_h": 0.5,
+      "drugs": ["Phenytoin"],
+      "herbs": ["Curcumin"],
+      "compartment_mode": "1-compartment",
+      "solver_method": "Radau",
+      "events": [
+        {"name": "Phenytoin", "dose_mg": 300.0, "time_h": 0.0},
+        {"name": "Phenytoin", "dose_mg": 300.0, "time_h": 24.0},
+        {"name": "Curcumin", "dose_mg": 500.0, "time_h": 24.0},
+        {"name": "Phenytoin", "dose_mg": 300.0, "time_h": 48.0},
+        {"name": "Curcumin", "dose_mg": 500.0, "time_h": 48.0},
+        {"name": "Phenytoin", "dose_mg": 300.0, "time_h": 72.0},
+        {"name": "Curcumin", "dose_mg": 500.0, "time_h": 72.0},
+        {"name": "Phenytoin", "dose_mg": 300.0, "time_h": 96.0}
+      ],
+      "expected_outcomes": {
+        "nonlinear_saturation": true,
+        "cmax_exceeds_threshold": true
+      }
+    },
+    {
+      "scenario_id": "scenario_c_midazolam_piperine_reversible",
+      "title": "Scenario C: Midazolam Probe Substrate Acute Exposure Modulation",
+      "description": "Single-dose Midazolam 7.5 mg with co-administered Piperine 20 mg over 24 hours. Demonstrates transient acute Cmax and AUC elevation.",
+      "duration_h": 24.0,
+      "step_h": 0.25,
+      "drugs": ["Midazolam"],
+      "herbs": ["Piperine"],
+      "compartment_mode": "1-compartment",
+      "solver_method": "Radau",
+      "events": [
+        {"name": "Midazolam", "dose_mg": 7.5, "time_h": 0.0},
+        {"name": "Piperine", "dose_mg": 20.0, "time_h": 0.0}
+      ],
+      "expected_outcomes": {
+        "auc_elevation_ratio_gt": 1.2
+      }
+    },
+    {
+      "scenario_id": "scenario_d_paracetamol_repeated_accumulation",
+      "title": "Scenario D: Paracetamol Q6H Multi-Dose Steady-State & Washout",
+      "description": "Paracetamol 500 mg administered every 6 hours for 24 hours followed by 24 hours of washout. Demonstrates linear multi-dose accumulation and complete clearance.",
+      "duration_h": 48.0,
+      "step_h": 0.25,
+      "drugs": ["Paracetamol"],
+      "herbs": [],
+      "compartment_mode": "1-compartment",
+      "solver_method": "Radau",
+      "events": [
+        {"name": "Paracetamol", "dose_mg": 500.0, "time_h": 0.0},
+        {"name": "Paracetamol", "dose_mg": 500.0, "time_h": 6.0},
+        {"name": "Paracetamol", "dose_mg": 500.0, "time_h": 12.0},
+        {"name": "Paracetamol", "dose_mg": 500.0, "time_h": 18.0}
+      ],
+      "expected_outcomes": {
+        "peak_at_multi_dose": true,
+        "washout_at_48h": true
+      }
+    },
+    {
+      "scenario_id": "scenario_e_digoxin_renal_caution",
+      "title": "Scenario E: Digoxin Narrow-Therapeutic-Index Clearance Caution",
+      "description": "Digoxin 0.25 mg daily in renal insufficiency (parameterized 50% clearance reduction). Demonstrates steep TMR decline toward arrhythmia threshold (0.002 mg/L).",
+      "duration_h": 96.0,
+      "step_h": 0.5,
+      "drugs": ["Digoxin"],
+      "herbs": [],
+      "compartment_mode": "1-compartment",
+      "solver_method": "Radau",
+      "events": [
+        {"name": "Digoxin", "dose_mg": 0.25, "time_h": 0.0},
+        {"name": "Digoxin", "dose_mg": 0.25, "time_h": 24.0},
+        {"name": "Digoxin", "dose_mg": 0.25, "time_h": 48.0},
+        {"name": "Digoxin", "dose_mg": 0.25, "time_h": 72.0}
+      ],
+      "expected_outcomes": {
+        "tmr_decrease": true
+      }
+    }
+  ]
+}

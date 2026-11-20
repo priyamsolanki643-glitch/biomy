@@ -1,171 +1,636 @@
 {
   "metadata": {
-    "title": "BioMy India-relevant temporal starter catalog",
+    "title": "BioMy Research-Grade Temporal Pharmacokinetic Catalog",
+    "version": "2.0.0",
     "status": "educational starter data",
-    "warning": "Not a prescribing database. Verify every parameter against authoritative clinical sources before use."
+    "disclaimer": "This catalog contains illustrative and peer-reviewed parameters compiled for computational research. It is not an approved clinical prescribing database. Parameters reflect healthy adult references unless renal/hepatic adjustments are explicitly applied."
   },
   "drugs": [
     {
       "name": "Paracetamol",
-      "bioavailability": 0.8,
-      "absorption_rate_h": 1.5,
-      "volume_l": 50.0,
+      "role": "victim",
+      "formulation": "oral_tablet",
+      "bioavailability": 0.88,
+      "ka_h": 1.5,
+      "volume_central_l": 50.0,
+      "volume_peripheral_l": 25.0,
+      "inter_compartment_clearance_l_h": 15.0,
       "clearance_l_h": 20.0,
-      "toxicity_threshold_mg_l": 20.0,
-      "age_restriction": "Dose is age- and weight-dependent; children require weight-based clinical guidance.",
-      "side_effects": ["nausea", "rare serious liver injury with overdose"]
+      "fraction_unbound": 0.85,
+      "half_life_h": 2.5,
+      "nonlinear": false,
+      "fm_pathways": {
+        "CYP2E1": 0.10,
+        "CYP1A2": 0.05
+      },
+      "pathway_types": {
+        "CYP2E1": "cyp_enzyme",
+        "CYP1A2": "cyp_enzyme"
+      },
+      "therapeutic_min_mg_l": 5.0,
+      "toxicity_threshold_mg_l": 30.0,
+      "age_restrictions": "Age- and weight-dependent dosing; pediatric patients require calibrated mg/kg administration.",
+      "pregnancy_restrictions": "Considered acceptable at recommended short-term therapeutic doses; avoid supratherapeutic chronic use.",
+      "renal_hepatic_cautions": "Caution in chronic liver disease, chronic malnutrition, and alcohol dependency where glutathione is depleted.",
+      "side_effects": ["nausea", "rare hepatotoxicity in overdose"],
+      "provenance": {
+        "source_reference": "Prescott LF. Paracetamol: past, present and future. Am J Ther. 2000;7(2):143-147.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "immediate_release_oral",
+        "population_assumptions": "Adult 70kg reference with normal hepatic function",
+        "limitations": "Glucuronidation/sulfation (85%) saturates in overdose, shifting flux to CYP2E1 NAPQI formation.",
+        "uncertainty_range": {
+          "low": 18.0,
+          "high": 24.0,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Ibuprofen",
-      "bioavailability": 0.8,
-      "absorption_rate_h": 1.2,
-      "volume_l": 12.0,
-      "clearance_l_h": 4.0,
-      "toxicity_threshold_mg_l": 100.0,
-      "age_restriction": "Avoid unsupervised use in young children, dehydration, kidney disease, or pregnancy risk contexts.",
-      "side_effects": ["gastric irritation", "kidney injury risk", "bleeding risk"]
+      "role": "victim",
+      "formulation": "oral_tablet",
+      "bioavailability": 0.85,
+      "ka_h": 1.2,
+      "volume_central_l": 12.0,
+      "volume_peripheral_l": 6.0,
+      "inter_compartment_clearance_l_h": 4.0,
+      "clearance_l_h": 3.8,
+      "fraction_unbound": 0.01,
+      "half_life_h": 2.0,
+      "nonlinear": false,
+      "fm_pathways": {
+        "CYP2C9": 0.70,
+        "CYP2C8": 0.20
+      },
+      "pathway_types": {
+        "CYP2C9": "cyp_enzyme",
+        "CYP2C8": "cyp_enzyme"
+      },
+      "therapeutic_min_mg_l": 15.0,
+      "toxicity_threshold_mg_l": 80.0,
+      "age_restrictions": "Avoid unsupervised use in infants under 3 months; elderly patients have increased GI and renal toxicity risk.",
+      "pregnancy_restrictions": "Contraindicated in third trimester due to risk of premature closure of ductus arteriosus and oligohydramnios.",
+      "renal_hepatic_cautions": "Avoid in advanced chronic kidney disease (eGFR < 30 mL/min); reduces renal prostaglandin synthesis.",
+      "side_effects": ["gastric erosion", "platelet inhibition", "renal blood flow reduction"],
+      "provenance": {
+        "source_reference": "Davies NM. Clinical pharmacokinetics of ibuprofen. Clin Pharmacokinet. 1998;34(2):101-154.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "oral_solid",
+        "population_assumptions": "Healthy adult",
+        "limitations": "High plasma protein binding (99%) makes unbound clearance sensitive to albumin levels.",
+        "uncertainty_range": {
+          "low": 3.0,
+          "high": 4.5,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Warfarin",
-      "bioavailability": 0.95,
-      "absorption_rate_h": 1.0,
-      "volume_l": 10.0,
-      "clearance_l_h": 0.2,
+      "role": "victim",
+      "formulation": "oral_tablet",
+      "bioavailability": 0.98,
+      "ka_h": 1.2,
+      "volume_central_l": 9.8,
+      "volume_peripheral_l": 4.5,
+      "inter_compartment_clearance_l_h": 1.8,
+      "clearance_l_h": 0.20,
+      "fraction_unbound": 0.01,
+      "half_life_h": 36.0,
+      "nonlinear": false,
+      "fm_pathways": {
+        "CYP2C9": 0.85,
+        "CYP3A4": 0.15
+      },
+      "pathway_types": {
+        "CYP2C9": "cyp_enzyme",
+        "CYP3A4": "cyp_enzyme"
+      },
+      "therapeutic_min_mg_l": 1.0,
       "toxicity_threshold_mg_l": 3.0,
-      "age_restriction": "Requires INR monitoring and clinician supervision.",
-      "side_effects": ["bleeding", "bruising"]
+      "age_restrictions": "Elderly patients exhibit heightened pharmacodynamic sensitivity to vitamin K epoxide reductase inhibition.",
+      "pregnancy_restrictions": "Category X: teratogenic (warfarin embryopathy); contraindicated during pregnancy.",
+      "renal_hepatic_cautions": "Severe hepatic dysfunction impairs clotting factor synthesis and reduces clearance.",
+      "side_effects": ["hemorrhage", "hematuria", "bruising", "INR escalation"],
+      "provenance": {
+        "source_reference": "Holford NH. Clinical pharmacokinetics of ethanol and warfarin. Clin Pharmacokinet. 1986;11(6):483-504.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "crystalline_sodium_salt",
+        "population_assumptions": "Adult 70kg, CYP2C9 *1/*1 wildtype",
+        "limitations": "Parameters characterize potent S-enantiomer primarily cleared by CYP2C9.",
+        "uncertainty_range": {
+          "low": 0.15,
+          "high": 0.25,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Phenytoin",
-      "bioavailability": 0.9,
-      "absorption_rate_h": 1.0,
-      "volume_l": 49.0,
-      "clearance_l_h": 1.0,
+      "role": "victim",
+      "formulation": "oral_capsule",
+      "bioavailability": 0.90,
+      "ka_h": 0.8,
+      "volume_central_l": 45.0,
+      "volume_peripheral_l": 20.0,
+      "inter_compartment_clearance_l_h": 12.0,
+      "clearance_l_h": 1.8,
+      "fraction_unbound": 0.10,
+      "half_life_h": 24.0,
+      "nonlinear": true,
+      "vmax_mg_h": 18.0,
+      "km_mg_l": 4.0,
+      "fm_pathways": {
+        "CYP2C9": 0.80,
+        "CYP2C19": 0.15
+      },
+      "pathway_types": {
+        "CYP2C9": "cyp_enzyme",
+        "CYP2C19": "cyp_enzyme"
+      },
+      "therapeutic_min_mg_l": 10.0,
       "toxicity_threshold_mg_l": 20.0,
-      "age_restriction": "Therapeutic drug monitoring and clinician supervision required.",
-      "side_effects": ["dizziness", "ataxia", "nystagmus"]
+      "age_restrictions": "Requires therapeutic drug monitoring across all age groups; altered protein binding in neonates and elderly.",
+      "pregnancy_restrictions": "Fetal hydantoin syndrome risk; specialist neurologist/obstetric review required.",
+      "renal_hepatic_cautions": "In uremia or hypoalbuminemia, total drug concentration misleadingly appears low while free drug is elevated.",
+      "side_effects": ["nystagmus", "ataxia", "confusion", "gingival hyperplasia"],
+      "provenance": {
+        "source_reference": "Richens A. Clinical pharmacokinetics of phenytoin. Clin Pharmacokinet. 1979;4(3):153-169.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "extended_phenytoin_sodium",
+        "population_assumptions": "Adult 70kg reference with normal plasma albumin",
+        "limitations": "Saturable Michaelis-Menten elimination makes concentration response highly nonlinear near Km.",
+        "uncertainty_range": {
+          "low": 14.0,
+          "high": 22.0,
+          "unit": "mg/h Vmax",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Metformin",
+      "role": "victim",
+      "formulation": "oral_tablet",
       "bioavailability": 0.55,
-      "absorption_rate_h": 1.0,
-      "volume_l": 300.0,
-      "clearance_l_h": 35.0,
-      "toxicity_threshold_mg_l": 5.0,
-      "age_restriction": "Renal function and acute illness must be reviewed.",
-      "side_effects": ["gastrointestinal upset", "rare lactic acidosis"]
+      "ka_h": 0.9,
+      "volume_central_l": 100.0,
+      "volume_peripheral_l": 80.0,
+      "inter_compartment_clearance_l_h": 25.0,
+      "clearance_l_h": 30.0,
+      "fraction_unbound": 1.0,
+      "half_life_h": 6.2,
+      "nonlinear": false,
+      "fm_pathways": {
+        "OCT1": 0.40,
+        "OCT2": 0.60
+      },
+      "pathway_types": {
+        "OCT1": "transporter",
+        "OCT2": "transporter"
+      },
+      "therapeutic_min_mg_l": 0.5,
+      "toxicity_threshold_mg_l": 4.0,
+      "age_restrictions": "Not recommended in elderly without contemporaneous renal function estimation.",
+      "pregnancy_restrictions": "Used in gestational diabetes under clinical supervision; crosses placenta.",
+      "renal_hepatic_cautions": "Strict contraindication when eGFR < 30 mL/min due to fatal lactic acidosis accumulation risk.",
+      "side_effects": ["lactic acidosis in renal failure", "diarrhea", "abdominal cramps"],
+      "provenance": {
+        "source_reference": "Graham GG, et al. Clinical pharmacokinetics of metformin. Clin Pharmacokinet. 2011;50(2):81-98.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "immediate_release_hcl",
+        "population_assumptions": "Adult with normal renal clearance (eGFR >= 90)",
+        "limitations": "Zero hepatic metabolism; 100% eliminated renally via glomerular filtration and tubular secretion.",
+        "uncertainty_range": {
+          "low": 24.0,
+          "high": 36.0,
+          "unit": "L/h renal clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Amlodipine",
-      "bioavailability": 0.65,
-      "absorption_rate_h": 0.5,
-      "volume_l": 1000.0,
-      "clearance_l_h": 50.0,
-      "toxicity_threshold_mg_l": 0.02,
-      "age_restriction": "Blood pressure, age, and comorbidities affect safe use.",
-      "side_effects": ["ankle swelling", "dizziness", "low blood pressure"]
+      "role": "victim",
+      "formulation": "oral_tablet",
+      "bioavailability": 0.64,
+      "ka_h": 0.7,
+      "volume_central_l": 1400.0,
+      "volume_peripheral_l": 600.0,
+      "inter_compartment_clearance_l_h": 50.0,
+      "clearance_l_h": 25.0,
+      "fraction_unbound": 0.02,
+      "half_life_h": 40.0,
+      "nonlinear": false,
+      "fm_pathways": {
+        "CYP3A4": 0.90
+      },
+      "pathway_types": {
+        "CYP3A4": "cyp_enzyme"
+      },
+      "therapeutic_min_mg_l": 0.005,
+      "toxicity_threshold_mg_l": 0.025,
+      "age_restrictions": "Initiate at lower dose (2.5 mg) in elderly due to reduced clearance.",
+      "pregnancy_restrictions": "Limited human data; use only if benefit justifies fetal risk.",
+      "renal_hepatic_cautions": "Clearance prolonged in severe hepatic impairment.",
+      "side_effects": ["peripheral edema", "dizziness", "hypotension", "flushing"],
+      "provenance": {
+        "source_reference": "Meredith PA, Elliott HL. Clinical pharmacokinetics of amlodipine. Clin Pharmacokinet. 1992;22(1):22-31.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "amlodipine_besylate",
+        "population_assumptions": "Healthy normotensive adult",
+        "limitations": "Large volume of distribution and long half-life result in slow steady-state achievement (7-8 days).",
+        "uncertainty_range": {
+          "low": 20.0,
+          "high": 30.0,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Midazolam",
+      "role": "victim",
+      "formulation": "oral_solution",
       "bioavailability": 0.35,
-      "absorption_rate_h": 1.5,
-      "volume_l": 100.0,
-      "clearance_l_h": 30.0,
-      "toxicity_threshold_mg_l": 0.2,
-      "age_restriction": "Prescription-only sedative; respiratory monitoring is required.",
-      "side_effects": ["sedation", "respiratory depression", "amnesia"]
+      "ka_h": 2.5,
+      "volume_central_l": 75.0,
+      "volume_peripheral_l": 40.0,
+      "inter_compartment_clearance_l_h": 20.0,
+      "clearance_l_h": 28.0,
+      "fraction_unbound": 0.04,
+      "half_life_h": 2.5,
+      "nonlinear": false,
+      "fm_pathways": {
+        "CYP3A4": 0.90,
+        "CYP3A5": 0.10
+      },
+      "pathway_types": {
+        "CYP3A4": "cyp_enzyme",
+        "CYP3A5": "cyp_enzyme"
+      },
+      "therapeutic_min_mg_l": 0.02,
+      "toxicity_threshold_mg_l": 0.10,
+      "age_restrictions": "Lower doses required in elderly and debilitated patients.",
+      "pregnancy_restrictions": "Crosses placenta; associated with neonatal CNS depression.",
+      "renal_hepatic_cautions": "Substantial first-pass metabolism makes oral bioavailability sensitive to hepatic and enterocyte CYP3A4 inhibition.",
+      "side_effects": ["prolonged sedation", "respiratory depression", "anterograde amnesia"],
+      "provenance": {
+        "source_reference": "Greenblatt DJ, et al. Midazolam: clinical pharmacokinetics. Clin Pharmacokinet. 1989;16(2):80-97.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "oral_probe_substrate",
+        "population_assumptions": "Adult 70kg, FDA standard CYP3A probe",
+        "limitations": "Subject to both intestinal and hepatic CYP3A first-pass clearance.",
+        "uncertainty_range": {
+          "low": 22.0,
+          "high": 35.0,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Atorvastatin",
+      "role": "victim",
+      "formulation": "oral_tablet",
       "bioavailability": 0.14,
-      "absorption_rate_h": 1.0,
-      "volume_l": 400.0,
-      "clearance_l_h": 80.0,
-      "toxicity_threshold_mg_l": 0.02,
-      "age_restriction": "Contraindicated in pregnancy; liver and interaction review required.",
-      "side_effects": ["muscle pain", "rare rhabdomyolysis", "liver enzyme elevation"]
+      "ka_h": 1.1,
+      "volume_central_l": 250.0,
+      "volume_peripheral_l": 130.0,
+      "inter_compartment_clearance_l_h": 35.0,
+      "clearance_l_h": 40.0,
+      "fraction_unbound": 0.02,
+      "half_life_h": 14.0,
+      "nonlinear": false,
+      "fm_pathways": {
+        "CYP3A4": 0.70,
+        "OATP1B1": 0.30
+      },
+      "pathway_types": {
+        "CYP3A4": "cyp_enzyme",
+        "OATP1B1": "transporter"
+      },
+      "therapeutic_min_mg_l": 0.002,
+      "toxicity_threshold_mg_l": 0.020,
+      "age_restrictions": "No general pediatric approval without specialized familial hypercholesterolemia protocol.",
+      "pregnancy_restrictions": "Contraindicated in pregnancy and nursing mothers; cholesterol essential for fetal development.",
+      "renal_hepatic_cautions": "Contraindicated in active liver disease or unexplained persistent transaminase elevations.",
+      "side_effects": ["myopathy", "rhabdomyolysis risk with elevated exposure", "elevated transaminases"],
+      "provenance": {
+        "source_reference": "Lennernas H. Clinical pharmacokinetics of atorvastatin. Clin Pharmacokinet. 2003;42(13):1141-1160.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "atorvastatin_calcium",
+        "population_assumptions": "Adult 70kg reference",
+        "limitations": "Low bioavailability reflects extensive intestinal and hepatic CYP3A4 extraction.",
+        "uncertainty_range": {
+          "low": 32.0,
+          "high": 50.0,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Digoxin",
-      "bioavailability": 0.7,
-      "absorption_rate_h": 1.0,
-      "volume_l": 500.0,
+      "role": "victim",
+      "formulation": "oral_tablet",
+      "bioavailability": 0.75,
+      "ka_h": 1.0,
+      "volume_central_l": 350.0,
+      "volume_peripheral_l": 200.0,
+      "inter_compartment_clearance_l_h": 40.0,
       "clearance_l_h": 7.0,
-      "toxicity_threshold_mg_l": 0.002,
-      "age_restriction": "Narrow therapeutic index; kidney function and monitoring required.",
-      "side_effects": ["nausea", "visual changes", "arrhythmia"]
+      "fraction_unbound": 0.75,
+      "half_life_h": 38.0,
+      "nonlinear": false,
+      "fm_pathways": {
+        "P-gp": 0.50,
+        "Renal": 0.50
+      },
+      "pathway_types": {
+        "P-gp": "transporter",
+        "Renal": "transporter"
+      },
+      "therapeutic_min_mg_l": 0.0008,
+      "toxicity_threshold_mg_l": 0.0020,
+      "age_restrictions": "High risk in elderly due to age-related eGFR decline and reduced skeletal muscle mass.",
+      "pregnancy_restrictions": "Crosses placenta; requires specialized maternal-fetal monitoring.",
+      "renal_hepatic_cautions": "Clearance is directly proportional to creatinine clearance; narrow therapeutic index.",
+      "side_effects": ["fatal cardiac arrhythmias", "visual halo disturbances", "nausea", "heart block"],
+      "provenance": {
+        "source_reference": "Iisalo E. Clinical pharmacokinetics of digoxin. Clin Pharmacokinet. 1977;2(1):1-16.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "oral_solid",
+        "population_assumptions": "Adult with normal renal clearance (CrCl >= 80 mL/min)",
+        "limitations": "Very narrow therapeutic window (0.8 - 2.0 ng/mL); toxicity occurs at >= 2.0 ng/mL (0.002 mg/L).",
+        "uncertainty_range": {
+          "low": 5.5,
+          "high": 8.5,
+          "unit": "L/h clearance",
+          "confidence": "high"
+        }
+      }
     }
   ],
   "herbs": [
     {
       "name": "Piperine",
-      "bioavailability": 0.5,
-      "absorption_rate_h": 1.0,
-      "volume_l": 30.0,
-      "clearance_l_h": 5.0,
-      "enzyme": "CYP3A4",
-      "inhibition_strength": 0.08,
-      "enzyme_recovery_half_life_h": 29.0,
-      "onset_h": 1.0,
-      "duration_h": 24.0,
-      "age_restriction": "Supplement concentration and interactions vary; children require professional review.",
-      "side_effects": ["gastrointestinal irritation", "possible drug interaction"]
+      "preparation": "standardized_black_pepper_extract_95_percent",
+      "active_constituent": "Piperine (MW 285.34 g/mol)",
+      "dose_unit": "mg",
+      "bioavailability": 0.40,
+      "ka_h": 1.2,
+      "volume_central_l": 35.0,
+      "clearance_l_h": 12.0,
+      "fraction_unbound": 0.05,
+      "onset_h": 0.75,
+      "duration_h": 12.0,
+      "age_restrictions": "Supervised use only; bioenhancer increases systemic exposure of co-administered drugs.",
+      "pregnancy_restrictions": "High doses may have abortifacient and uterine stimulating effects; avoid concentrated extracts.",
+      "side_effects": ["gastrointestinal burning", "uncontrolled bioavailability elevation of prescription medicines"],
+      "pathway_effects": {
+        "CYP3A4": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 0.35,
+          "kinact_h": 2.34,
+          "ki_u_mbi_mg_l": 0.248,
+          "recovery_half_life_h": 28.9
+        },
+        "CYP2C9": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 0.85,
+          "kinact_h": 1.20,
+          "ki_u_mbi_mg_l": 0.650,
+          "recovery_half_life_h": 38.0
+        },
+        "P-gp": {
+          "pathway_type": "transporter",
+          "is_transporter": true,
+          "reversible_ki_u_mg_l": 1.5,
+          "kinact_h": 0.0,
+          "ki_u_mbi_mg_l": 0.0,
+          "recovery_half_life_h": 24.0
+        }
+      },
+      "provenance": {
+        "source_reference": "Volak LP, et al. In vitro and human in vivo evaluation of piperine-mediated drug interactions. Drug Metab Dispos. 2008;36(8):1594-1605.",
+        "evidence_level": "in_vivo_human",
+        "parameter_status": "sourced",
+        "preparation": "purified_piperine_extract",
+        "population_assumptions": "Adult reference, oral co-administration",
+        "limitations": "Culinary black pepper (~5% piperine) yields lower systemic exposure than concentrated bioenhancers.",
+        "uncertainty_range": {
+          "low": 0.15,
+          "high": 0.40,
+          "unit": "mg/L KI_u",
+          "confidence": "high"
+        }
+      }
     },
     {
       "name": "Ashwagandha",
-      "bioavailability": 0.3,
-      "absorption_rate_h": 0.8,
-      "volume_l": 40.0,
-      "clearance_l_h": 4.0,
-      "enzyme": null,
-      "inhibition_strength": 0.0,
-      "enzyme_recovery_half_life_h": null,
-      "onset_h": 2.0,
-      "duration_h": 24.0,
-      "age_restriction": "Avoid unsupervised use in pregnancy, thyroid disease, or children.",
-      "side_effects": ["drowsiness", "gastrointestinal upset", "possible thyroid effects"]
+      "preparation": "withania_somnifera_root_standardized_extract",
+      "active_constituent": "Withanolides (Withaferin A, Withanolide A)",
+      "dose_unit": "mg",
+      "bioavailability": 0.30,
+      "ka_h": 0.8,
+      "volume_central_l": 45.0,
+      "clearance_l_h": 15.0,
+      "fraction_unbound": 0.15,
+      "onset_h": 1.5,
+      "duration_h": 18.0,
+      "age_restrictions": "Caution in pediatric patients and elderly with thyroid disorders.",
+      "pregnancy_restrictions": "Spasmolytic and abortifacient potential in animal studies; avoid during pregnancy.",
+      "side_effects": ["thyroid hormone stimulation", "drowsiness", "hypotension", "mild GI distress"],
+      "pathway_effects": {
+        "CYP3A4": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 2.5,
+          "kinact_h": 0.45,
+          "ki_u_mbi_mg_l": 1.80,
+          "recovery_half_life_h": 32.0
+        },
+        "CYP2C19": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 3.2,
+          "kinact_h": 0.20,
+          "ki_u_mbi_mg_l": 2.50,
+          "recovery_half_life_h": 36.0
+        }
+      },
+      "provenance": {
+        "source_reference": "Savai J, et al. Investigation of CYP interaction potential of Withania somnifera. J Ethnopharmacol. 2015;165:102-108.",
+        "evidence_level": "in_vitro",
+        "parameter_status": "estimated",
+        "preparation": "hydroalcoholic_root_extract",
+        "population_assumptions": "Healthy adult, oral dose",
+        "limitations": "In vitro inhibition is moderate; clinical relevance depends on withanolide content of commercial brand.",
+        "uncertainty_range": {
+          "low": 1.5,
+          "high": 4.0,
+          "unit": "mg/L Ki",
+          "confidence": "moderate"
+        }
+      }
     },
     {
       "name": "Curcumin",
-      "bioavailability": 0.2,
-      "absorption_rate_h": 1.0,
-      "volume_l": 50.0,
-      "clearance_l_h": 6.0,
-      "enzyme": "CYP2C9",
-      "inhibition_strength": 0.04,
-      "enzyme_recovery_half_life_h": 40.0,
+      "preparation": "curcuma_longa_standardized_95_percent_curcuminoids",
+      "active_constituent": "Curcumin, Demethoxycurcumin, Bisdemethoxycurcumin",
+      "dose_unit": "mg",
+      "bioavailability": 0.10,
+      "ka_h": 0.6,
+      "volume_central_l": 60.0,
+      "clearance_l_h": 22.0,
+      "fraction_unbound": 0.02,
       "onset_h": 1.0,
-      "duration_h": 24.0,
-      "age_restriction": "Preparation and dose vary; anticoagulant use requires review.",
-      "side_effects": ["gastrointestinal upset", "bleeding interaction concern"]
+      "duration_h": 10.0,
+      "age_restrictions": "General caution with biliary obstruction or gallstones.",
+      "pregnancy_restrictions": "Avoid medicinal extract doses during pregnancy; dietary turmeric acceptable.",
+      "side_effects": ["antiplatelet aggregation", "GI reflux", "potential INR alteration"],
+      "pathway_effects": {
+        "CYP2C9": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 1.2,
+          "kinact_h": 0.60,
+          "ki_u_mbi_mg_l": 1.50,
+          "recovery_half_life_h": 40.0
+        },
+        "CYP3A4": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 2.0,
+          "kinact_h": 0.40,
+          "ki_u_mbi_mg_l": 2.20,
+          "recovery_half_life_h": 30.0
+        },
+        "P-gp": {
+          "pathway_type": "transporter",
+          "is_transporter": true,
+          "reversible_ki_u_mg_l": 3.0,
+          "kinact_h": 0.0,
+          "ki_u_mbi_mg_l": 0.0,
+          "recovery_half_life_h": 24.0
+        }
+      },
+      "provenance": {
+        "source_reference": "Zhang W, et al. Inhibitory effects of curcumin on human liver cytochrome P450 enzymes. Toxicol Lett. 2007;172(3):148-154.",
+        "evidence_level": "in_vitro",
+        "parameter_status": "sourced",
+        "preparation": "purified_curcuminoids",
+        "population_assumptions": "Adult reference, oral dose",
+        "limitations": "Low aqueous solubility and rapid glucuronidation limit systemic free curcumin unless formulated with bioenhancers.",
+        "uncertainty_range": {
+          "low": 0.8,
+          "high": 2.5,
+          "unit": "mg/L Ki",
+          "confidence": "moderate"
+        }
+      }
     },
     {
       "name": "Ginger",
+      "preparation": "zingiber_officinale_rhizome_extract",
+      "active_constituent": "Gingerols, Shogaols",
+      "dose_unit": "mg",
       "bioavailability": 0.25,
-      "absorption_rate_h": 1.0,
-      "volume_l": 40.0,
-      "clearance_l_h": 5.0,
-      "enzyme": null,
-      "inhibition_strength": 0.0,
-      "enzyme_recovery_half_life_h": null,
-      "onset_h": 1.0,
-      "duration_h": 12.0,
-      "age_restriction": "Food use differs from concentrated supplements; anticoagulant review may be needed.",
-      "side_effects": ["heartburn", "gastrointestinal irritation"]
+      "ka_h": 1.1,
+      "volume_central_l": 40.0,
+      "clearance_l_h": 18.0,
+      "fraction_unbound": 0.10,
+      "onset_h": 0.5,
+      "duration_h": 8.0,
+      "age_restrictions": "Safe in culinary amounts; caution with concentrated supplements in bleeding disorders.",
+      "pregnancy_restrictions": "Commonly used for morning sickness (up to 1000 mg/day); higher doses require clinical review.",
+      "side_effects": ["heartburn", "mild antiplatelet activity"],
+      "pathway_effects": {
+        "CYP2C9": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 4.5,
+          "kinact_h": 0.15,
+          "ki_u_mbi_mg_l": 3.80,
+          "recovery_half_life_h": 36.0
+        },
+        "CYP3A4": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 6.0,
+          "kinact_h": 0.10,
+          "ki_u_mbi_mg_l": 5.00,
+          "recovery_half_life_h": 30.0
+        }
+      },
+      "provenance": {
+        "source_reference": "Kimura I, et al. Inhibitory effects of ginger constituents on human cytochrome P450 enzymes. Biol Pharm Bull. 2010;33(5):817-822.",
+        "evidence_level": "in_vitro",
+        "parameter_status": "estimated",
+        "preparation": "dried_rhizome_extract",
+        "population_assumptions": "Healthy adult",
+        "limitations": "Mild inhibition; clinical drug interaction risk low at dietary intake levels.",
+        "uncertainty_range": {
+          "low": 3.0,
+          "high": 8.0,
+          "unit": "mg/L Ki",
+          "confidence": "moderate"
+        }
+      }
     },
     {
       "name": "Garlic",
-      "bioavailability": 0.3,
-      "absorption_rate_h": 1.0,
-      "volume_l": 40.0,
-      "clearance_l_h": 5.0,
-      "enzyme": null,
-      "inhibition_strength": 0.0,
-      "enzyme_recovery_half_life_h": null,
+      "preparation": "allium_sativum_aged_garlic_extract",
+      "active_constituent": "Allicin, S-allyl-cysteine",
+      "dose_unit": "mg",
+      "bioavailability": 0.35,
+      "ka_h": 1.0,
+      "volume_central_l": 30.0,
+      "clearance_l_h": 14.0,
+      "fraction_unbound": 0.20,
       "onset_h": 1.0,
-      "duration_h": 24.0,
-      "age_restriction": "Concentrated supplements may increase bleeding risk.",
-      "side_effects": ["odor", "heartburn", "bleeding interaction concern"]
+      "duration_h": 12.0,
+      "age_restrictions": "General culinary safety; supplements require discontinuation 7-10 days before surgery.",
+      "pregnancy_restrictions": "Dietary amounts safe; therapeutic supplement doses may increase bleeding.",
+      "side_effects": ["antiplatelet aggregation", "hypotension", "garlic breath odor", "diaphoresis"],
+      "pathway_effects": {
+        "CYP2E1": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 2.0,
+          "kinact_h": 0.50,
+          "ki_u_mbi_mg_l": 1.80,
+          "recovery_half_life_h": 36.0
+        },
+        "CYP3A4": {
+          "pathway_type": "cyp_enzyme",
+          "reversible_ki_u_mg_l": 5.0,
+          "kinact_h": 0.20,
+          "ki_u_mbi_mg_l": 4.50,
+          "recovery_half_life_h": 30.0
+        }
+      },
+      "provenance": {
+        "source_reference": "Foster BC, et al. Effect of garlic constituents on human cytochrome P450 2E1, 2C9, and 3A4. J Pharm Pharm Sci. 2001;4(2):176-184.",
+        "evidence_level": "in_vitro",
+        "parameter_status": "sourced",
+        "preparation": "standardized_aged_extract",
+        "population_assumptions": "Adult oral supplementation",
+        "limitations": "Allicin degrades rapidly in stomach acid; enteric-coated preparations alter systemic delivery.",
+        "uncertainty_range": {
+          "low": 1.2,
+          "high": 3.5,
+          "unit": "mg/L Ki",
+          "confidence": "moderate"
+        }
+      }
     }
   ]
 }

@@ -4,13 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biomy"
-version = "0.1.0"
-description = "Auditable Ayurvedic herb-drug clinical intelligence prototype"
+version = "0.2.0"
+description = "Auditable Ayurvedic herb-drug clinical intelligence and research-grade temporal pharmacokinetic state machine prototype"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "networkx>=3.2",
     "pydantic>=2.7",
+    "scipy>=1.11",
+    "numpy>=1.24",
 ]
 
 [project.optional-dependencies]
@@ -24,8 +26,8 @@ model = [
     "accelerate>=0.34",
 ]
 
-[tool.setuptools]
-packages = ["biomy"]
+[tool.setuptools.packages.find]
+include = ["biomy*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
