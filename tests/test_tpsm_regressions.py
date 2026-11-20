@@ -1,5 +1,8 @@
 """Regression and dynamic physiological recovery tests."""
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 from biomy.tpsm.engine import TPSMEngine
@@ -260,3 +263,54 @@ def test_simulation_rejects_invalid_step_h():
         engine.simulate([], duration_h=24.0, step_h=0.0)
     with pytest.raises(TPSMValidationError, match="cannot exceed duration_h"):
         engine.simulate([], duration_h=24.0, step_h=48.0)
+
+
+def test_seed_interactions_and_temporal_catalog_complete_parity():
+    """Verify that every compound in seed_interactions.json is defined in temporal_catalog.json."""
+    cat_path = Path(__file__).resolve().parent.parent / "data" / "temporal_catalog.json"
+    seed_path = Path(__file__).resolve().parent.parent / "data" / "seed_interactions.json"
+
+    catalog = ParameterCatalog.from_json_file(cat_path)
+    with seed_path.open("r", encoding="utf-8") as f:
+        seeds = json.load(f)
+
+    for entry in seeds:
+        source_herb = entry["source"]
+        target_drug = entry["target"]
+
+        # Herb must be present in catalog
+        assert source_herb.lower() in catalog.herbs, f"Herb '{source_herb}' from seed interactions is missing in temporal catalog"
+        herb_obj = catalog.get_herb(source_herb)
+        assert herb_obj.name.lower() == source_herb.lower()
+
+        # Drug must be present in catalog
+        assert target_drug.lower() in catalog.drugs, f"Drug '{target_drug}' from seed interactions is missing in temporal catalog"
+        drug_obj = catalog.get_drug(target_drug)
+        assert drug_obj.name.lower() == target_drug.lower()
+
+
+def test_newly_synced_pairs_can_be_simulated_in_tpsm():
+    """Verify that newly synced seed graph pairs can be simulated end-to-end in TPSM."""
+    catalog = ParameterCatalog.from_json_file()
+
+    test_pairs = [
+        ("Giloy", "Paracetamol", 500.0, 500.0),
+        ("Guggul", "Diltiazem", 300.0, 60.0),
+        ("Berberine", "Metformin", 500.0, 500.0),
+        ("Grapefruit", "Atorvastatin", 50.0, 20.0),
+    ]
+
+    for herb_name, drug_name, herb_dose, drug_dose in test_pairs:
+        herb = catalog.get_herb(herb_name)
+        drug = catalog.get_drug(drug_name)
+
+        engine = TPSMEngine([drug], [herb])
+        events = [
+            DoseEvent(drug.name, drug_dose, 0.0),
+            DoseEvent(herb.name, herb_dose, 0.0),
+        ]
+        result = engine.simulate(events, duration_h=24.0, step_h=0.5)
+        assert result.solver_success is True
+        assert len(result.time_points) >= 2
+        assert result.c_max[drug.name] > 0.0
+
