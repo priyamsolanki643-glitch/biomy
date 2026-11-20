@@ -7,6 +7,8 @@ from biomy.ast_parser import BioASTParser
 from biomy.calculations import BioCalculations
 from biomy.pagerank import MetabolicPageRank
 from biomy.ripple import ClinicalRippleEngine, Interaction
+from biomy.catalog import load_temporal_catalog
+from biomy.tpsm import DoseEvent, TemporalPKStateMachine
 
 
 st.set_page_config(page_title="BioMy", layout="wide")
@@ -127,4 +129,45 @@ with tab_interaction:
     st.caption(
         "Seed entries are illustrative and are not a substitute for PubMed review, "
         "prescribing information, or professional clinical assessment."
+    )
+
+st.divider()
+st.header("Temporal effect explorer (TPSM)")
+st.caption(
+    "Educational one-compartment simulation: it shows timing, accumulation and washout. "
+    "It does not calculate a safe dose or provide treatment advice."
+)
+catalog_drugs, catalog_herbs, catalog_meta = load_temporal_catalog()
+drug_name = st.selectbox("Drug", sorted(catalog_drugs), format_func=lambda value: catalog_drugs[value].name)
+herb_name = st.selectbox("Herb (optional)", ["None"] + sorted(catalog_herbs), format_func=lambda value: "No herb" if value == "None" else catalog_herbs[value].name)
+duration = st.slider("Simulation duration (hours)", 12, 168, 72, step=12)
+dose = st.number_input("Illustrative drug dose (mg)", min_value=0.1, value=5.0)
+herb_dose = st.number_input("Illustrative herb dose (mg)", min_value=0.0, value=20.0)
+if st.button("Simulate timeline", type="primary"):
+    selected_drugs = [catalog_drugs[drug_name]]
+    selected_herbs = [] if herb_name == "None" else [catalog_herbs[herb_name]]
+    events = [DoseEvent(catalog_drugs[drug_name].name, dose, 0.0)]
+    if selected_herbs:
+        events.append(DoseEvent(selected_herbs[0].name, herb_dose, 0.0))
+        events.append(DoseEvent(selected_herbs[0].name, herb_dose, 24.0))
+    result = TemporalPKStateMachine(selected_drugs, selected_herbs).simulate(events, duration)
+    st.line_chart(
+        {
+            catalog_drugs[drug_name].name: {
+                point.time_h: point.concentrations_mg_l[catalog_drugs[drug_name].name.lower()]
+                for point in result.points
+            }
+        },
+        x_label="Time (hours)",
+        y_label="Approx. concentration (mg/L)",
+    )
+    latest = result.points[-1]
+    st.write(
+        {
+            "last_time_h": latest.time_h,
+            "active_enzyme_fraction": latest.active_enzyme_fraction,
+            "first_threshold_crossing_h": result.first_toxicity_time(catalog_drugs[drug_name].name),
+            "assumptions": result.assumptions,
+            "warnings": result.warnings,
+        }
     )

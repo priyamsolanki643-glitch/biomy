@@ -33,10 +33,19 @@ auditable report interface.
 - Lab values are excluded from exposure parsing.
 - Adult clinical equations validate age and reject non-finite or out-of-range inputs.
 
-## TPSM status
+## TPSM temporal layer
 
-TPSM is intentionally not included in this implementation. Its future demo should use one
-published human interaction study, separately identified assumptions, and observed-versus-modeled points.
+TPSM is now included as an educational temporal layer. It models approximate
+one-compartment exposure, repeated-dose accumulation, herb washout, and
+enzyme-recovery state. The starter catalog includes common household and
+clinical-context examples such as paracetamol, ibuprofen, warfarin, phenytoin,
+metformin, amlodipine, midazolam, atorvastatin, digoxin, piperine, ashwagandha,
+curcumin, ginger, and garlic.
+
+The catalog is explicitly illustrative. It is not a prescribing database and
+does not provide safe-dose recommendations. Every parameter must be replaced or
+validated against authoritative pharmacokinetic and interaction sources before
+clinical use.
 
 ## Run
 

@@ -7,6 +7,8 @@ from biomy.ripple import ClinicalRippleEngine, Interaction
 from biomy.scalar import ContinuousScalarProjector
 from biomy.verification import BiochemicalInvariantGate, ClearanceParityChecker
 from biomy.hud import ClinicalHUD
+from biomy.catalog import load_temporal_catalog
+from biomy.tpsm import DoseEvent, TemporalPKStateMachine
 
 
 def test_parser_extracts_analytes_and_exposures():
@@ -114,3 +116,37 @@ def test_renal_dose_check():
 def test_hud_has_safety_disclaimer():
     report = ClinicalHUD().build_report("Test", ["Finding"], ["Reference"])
     assert "Educational prototype" in report.disclaimer
+
+
+def test_temporal_catalog_contains_common_starter_entries():
+    drugs, herbs, metadata = load_temporal_catalog()
+    assert "paracetamol" in drugs
+    assert "warfarin" in drugs
+    assert "piperine" in herbs
+    assert metadata["status"] == "educational starter data"
+
+
+def test_tpsm_tracks_concentration_and_washout():
+    drugs, herbs, _ = load_temporal_catalog()
+    result = TemporalPKStateMachine([drugs["warfarin"]], [herbs["piperine"]]).simulate(
+        [
+            DoseEvent("Warfarin", 5.0, 0.0),
+            DoseEvent("Piperine", 20.0, 0.0),
+        ],
+        duration_h=48,
+        step_h=1.0,
+    )
+    series = result.series("Warfarin")
+    assert len(series) == 49
+    assert series[1][1] > 0
+    assert series[-1][1] < series[1][1]
+    assert result.points[0].active_enzyme_fraction["CYP3A4"] == 1.0
+
+
+def test_tpsm_rejects_unknown_event_and_invalid_window():
+    drugs, _, _ = load_temporal_catalog()
+    engine = TemporalPKStateMachine([drugs["warfarin"]])
+    with pytest.raises(ValueError):
+        engine.simulate([DoseEvent("Unknown", 1.0, 0.0)], 24)
+    with pytest.raises(ValueError):
+        engine.simulate([], 0)

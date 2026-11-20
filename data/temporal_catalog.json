@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "title": "BioMy India-relevant temporal starter catalog",
+    "status": "educational starter data",
+    "warning": "Not a prescribing database. Verify every parameter against authoritative clinical sources before use."
+  },
+  "drugs": [
+    {
+      "name": "Paracetamol",
+      "bioavailability": 0.8,
+      "absorption_rate_h": 1.5,
+      "volume_l": 50.0,
+      "clearance_l_h": 20.0,
+      "toxicity_threshold_mg_l": 20.0,
+      "age_restriction": "Dose is age- and weight-dependent; children require weight-based clinical guidance.",
+      "side_effects": ["nausea", "rare serious liver injury with overdose"]
+    },
+    {
+      "name": "Ibuprofen",
+      "bioavailability": 0.8,
+      "absorption_rate_h": 1.2,
+      "volume_l": 12.0,
+      "clearance_l_h": 4.0,
+      "toxicity_threshold_mg_l": 100.0,
+      "age_restriction": "Avoid unsupervised use in young children, dehydration, kidney disease, or pregnancy risk contexts.",
+      "side_effects": ["gastric irritation", "kidney injury risk", "bleeding risk"]
+    },
+    {
+      "name": "Warfarin",
+      "bioavailability": 0.95,
+      "absorption_rate_h": 1.0,
+      "volume_l": 10.0,
+      "clearance_l_h": 0.2,
+      "toxicity_threshold_mg_l": 3.0,
+      "age_restriction": "Requires INR monitoring and clinician supervision.",
+      "side_effects": ["bleeding", "bruising"]
+    },
+    {
+      "name": "Phenytoin",
+      "bioavailability": 0.9,
+      "absorption_rate_h": 1.0,
+      "volume_l": 49.0,
+      "clearance_l_h": 1.0,
+      "toxicity_threshold_mg_l": 20.0,
+      "age_restriction": "Therapeutic drug monitoring and clinician supervision required.",
+      "side_effects": ["dizziness", "ataxia", "nystagmus"]
+    },
+    {
+      "name": "Metformin",
+      "bioavailability": 0.55,
+      "absorption_rate_h": 1.0,
+      "volume_l": 300.0,
+      "clearance_l_h": 35.0,
+      "toxicity_threshold_mg_l": 5.0,
+      "age_restriction": "Renal function and acute illness must be reviewed.",
+      "side_effects": ["gastrointestinal upset", "rare lactic acidosis"]
+    },
+    {
+      "name": "Amlodipine",
+      "bioavailability": 0.65,
+      "absorption_rate_h": 0.5,
+      "volume_l": 1000.0,
+      "clearance_l_h": 50.0,
+      "toxicity_threshold_mg_l": 0.02,
+      "age_restriction": "Blood pressure, age, and comorbidities affect safe use.",
+      "side_effects": ["ankle swelling", "dizziness", "low blood pressure"]
+    },
+    {
+      "name": "Midazolam",
+      "bioavailability": 0.35,
+      "absorption_rate_h": 1.5,
+      "volume_l": 100.0,
+      "clearance_l_h": 30.0,
+      "toxicity_threshold_mg_l": 0.2,
+      "age_restriction": "Prescription-only sedative; respiratory monitoring is required.",
+      "side_effects": ["sedation", "respiratory depression", "amnesia"]
+    },
+    {
+      "name": "Atorvastatin",
+      "bioavailability": 0.14,
+      "absorption_rate_h": 1.0,
+      "volume_l": 400.0,
+      "clearance_l_h": 80.0,
+      "toxicity_threshold_mg_l": 0.02,
+      "age_restriction": "Contraindicated in pregnancy; liver and interaction review required.",
+      "side_effects": ["muscle pain", "rare rhabdomyolysis", "liver enzyme elevation"]
+    },
+    {
+      "name": "Digoxin",
+      "bioavailability": 0.7,
+      "absorption_rate_h": 1.0,
+      "volume_l": 500.0,
+      "clearance_l_h": 7.0,
+      "toxicity_threshold_mg_l": 0.002,
+      "age_restriction": "Narrow therapeutic index; kidney function and monitoring required.",
+      "side_effects": ["nausea", "visual changes", "arrhythmia"]
+    }
+  ],
+  "herbs": [
+    {
+      "name": "Piperine",
+      "bioavailability": 0.5,
+      "absorption_rate_h": 1.0,
+      "volume_l": 30.0,
+      "clearance_l_h": 5.0,
+      "enzyme": "CYP3A4",
+      "inhibition_strength": 0.08,
+      "enzyme_recovery_half_life_h": 29.0,
+      "onset_h": 1.0,
+      "duration_h": 24.0,
+      "age_restriction": "Supplement concentration and interactions vary; children require professional review.",
+      "side_effects": ["gastrointestinal irritation", "possible drug interaction"]
+    },
+    {
+      "name": "Ashwagandha",
+      "bioavailability": 0.3,
+      "absorption_rate_h": 0.8,
+      "volume_l": 40.0,
+      "clearance_l_h": 4.0,
+      "enzyme": null,
+      "inhibition_strength": 0.0,
+      "enzyme_recovery_half_life_h": null,
+      "onset_h": 2.0,
+      "duration_h": 24.0,
+      "age_restriction": "Avoid unsupervised use in pregnancy, thyroid disease, or children.",
+      "side_effects": ["drowsiness", "gastrointestinal upset", "possible thyroid effects"]
+    },
+    {
+      "name": "Curcumin",
+      "bioavailability": 0.2,
+      "absorption_rate_h": 1.0,
+      "volume_l": 50.0,
+      "clearance_l_h": 6.0,
+      "enzyme": "CYP2C9",
+      "inhibition_strength": 0.04,
+      "enzyme_recovery_half_life_h": 40.0,
+      "onset_h": 1.0,
+      "duration_h": 24.0,
+      "age_restriction": "Preparation and dose vary; anticoagulant use requires review.",
+      "side_effects": ["gastrointestinal upset", "bleeding interaction concern"]
+    },
+    {
+      "name": "Ginger",
+      "bioavailability": 0.25,
+      "absorption_rate_h": 1.0,
+      "volume_l": 40.0,
+      "clearance_l_h": 5.0,
+      "enzyme": null,
+      "inhibition_strength": 0.0,
+      "enzyme_recovery_half_life_h": null,
+      "onset_h": 1.0,
+      "duration_h": 12.0,
+      "age_restriction": "Food use differs from concentrated supplements; anticoagulant review may be needed.",
+      "side_effects": ["heartburn", "gastrointestinal irritation"]
+    },
+    {
+      "name": "Garlic",
+      "bioavailability": 0.3,
+      "absorption_rate_h": 1.0,
+      "volume_l": 40.0,
+      "clearance_l_h": 5.0,
+      "enzyme": null,
+      "inhibition_strength": 0.0,
+      "enzyme_recovery_half_life_h": null,
+      "onset_h": 1.0,
+      "duration_h": 24.0,
+      "age_restriction": "Concentrated supplements may increase bleeding risk.",
+      "side_effects": ["odor", "heartburn", "bleeding interaction concern"]
+    }
+  ]
+}

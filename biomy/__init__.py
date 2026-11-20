@@ -9,6 +9,8 @@ from .pagerank import MetabolicPageRank
 from .verification import BiochemicalInvariantGate, ClearanceParityChecker
 from .hud import ClinicalHUD
 from .model import BioMistralCore
+from .tpsm import DoseEvent, TemporalDrug, TemporalHerb, TemporalPKStateMachine
+from .catalog import load_temporal_catalog
 
 __all__ = [
     "AnalyteNode",
@@ -22,4 +24,9 @@ __all__ = [
     "ClearanceParityChecker",
     "ClinicalHUD",
     "BioMistralCore",
+    "DoseEvent",
+    "TemporalDrug",
+    "TemporalHerb",
+    "TemporalPKStateMachine",
+    "load_temporal_catalog",
 ]
