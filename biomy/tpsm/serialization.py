@@ -95,3 +95,8 @@ class TPSMSerializer:
         lines.append("\n=== TASK FOR BIOMISTRAL ===")
         lines.append(context["system_instruction_for_llm"])
         return "\n".join(lines)
+
+    @staticmethod
+    def to_llm_prompt_context(result: SimulationResult, patient_context: str = "") -> str:
+        """Alias for to_formatted_prompt for clean LLM prompt context generation."""
+        return TPSMSerializer.to_formatted_prompt(result, patient_context=patient_context)

@@ -150,3 +150,37 @@ def test_tpsm_rejects_unknown_event_and_invalid_window():
         engine.simulate([DoseEvent("Unknown", 1.0, 0.0)], 24)
     with pytest.raises(ValueError):
         engine.simulate([], 0)
+
+
+def test_parser_extracts_percent_analytes():
+    text = "HbA1c: 7.2 %; Glucose: 110 mg/dL"
+    analytes, _ = BioASTParser().parse(text)
+    assert len(analytes) == 2
+    assert analytes[0].name.lower() == "hba1c"
+    assert analytes[0].value == 7.2
+    assert analytes[0].unit == "%"
+
+
+def test_ripple_engine_case_insensitive_indirect_search():
+    engine = ClinicalRippleEngine()
+    engine.add_interaction(
+        Interaction(
+            source="Piperine",
+            target="Cyclosporine",
+            enzyme="CYP3A4",
+            effect="inhibits metabolism",
+            severity="high",
+            source_reference="Ref",
+        )
+    )
+    # Direct case-insensitive
+    res_direct = engine.screen_pair("piperine", "cyclosporine")
+    assert res_direct["status"] == "direct_evidence"
+
+    # Indirect case-insensitive through shared enzyme
+    engine2 = ClinicalRippleEngine()
+    engine2.add_interaction(Interaction(source="Piperine", target="Midazolam", enzyme="CYP3A4", effect="inh", severity="mod", source_reference="Ref"))
+    engine2.add_interaction(Interaction(source="Grapefruit", target="Cyclosporine", enzyme="CYP3A4", effect="inh", severity="high", source_reference="Ref"))
+    res_indirect = engine2.screen_pair("piperine", "cyclosporine")
+    assert res_indirect["status"] == "indirect_mechanism_only"
+

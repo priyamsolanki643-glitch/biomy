@@ -11,7 +11,7 @@ class BioASTParser:
         r"(?P<name>[A-Za-z][A-Za-z0-9 _-]*?)"
         r"\s*[:=]?\s*(?P<value>[+-]?(?:\d+(?:\.\d*)?|\.\d+))"
         r"\s*(?P<unit>%|mg/dL|mg\/dL|mg/L|mg\/L|mmol/L|mmol\/L|mmol/mol|"
-        r"umol/L|umol\/L|micromol/L|micromol\/L|mL/min|IU/L|g/dL|mcg/mL|ng/mL)\b",
+        r"umol/L|umol\/L|micromol/L|micromol\/L|mL/min|IU/L|g/dL|mcg/mL|ng/mL)(?![A-Za-z0-9])",
         re.IGNORECASE,
     )
 

@@ -76,9 +76,13 @@ class ClinicalRippleEngine:
             }
 
         # 2. Check for indirect mechanistic pathway via shared enzyme
-        if h_clean in self.graph and d_clean in self.graph:
+        node_map = {n.lower(): n for n in self.graph.nodes}
+        h_node = node_map.get(h_clean.lower(), h_clean)
+        d_node = node_map.get(d_clean.lower(), d_clean)
+
+        if h_node in self.graph and d_node in self.graph:
             try:
-                path = nx.shortest_path(self.graph, h_clean, d_clean)
+                path = nx.shortest_path(self.graph, h_node, d_node)
                 # Path format: Herb -> Enzyme -> Drug
                 intermediate_enzymes = [
                     node for node in path[1:-1]
@@ -87,8 +91,8 @@ class ClinicalRippleEngine:
                 enzyme_name = intermediate_enzymes[0] if intermediate_enzymes else "shared metabolic pathway"
                 return {
                     "status": "indirect_mechanism_only",
-                    "herb": h_clean,
-                    "drug": d_clean,
+                    "herb": h_node,
+                    "drug": d_node,
                     "enzyme": enzyme_name,
                     "effect": f"Shared substrate/metabolic pathway via {enzyme_name}",
                     "severity": "unknown",

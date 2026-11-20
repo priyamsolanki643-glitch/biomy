@@ -98,6 +98,9 @@ class SimulationValidator:
         if not isfinite(herb.clearance_l_h) or herb.clearance_l_h < 0:
             raise TPSMValidationError(f"{herb.name}: clearance CL must be non-negative, got {herb.clearance_l_h}")
 
+        if not isfinite(herb.fraction_unbound) or not (0.0 < herb.fraction_unbound <= 1.0):
+            raise TPSMValidationError(f"{herb.name}: fraction unbound fu must be in (0, 1], got {herb.fraction_unbound}")
+
         for enz, pathway in herb.pathway_effects.items():
             if pathway.kinact_h is not None and (pathway.kinact_h < 0 or not isfinite(pathway.kinact_h)):
                 raise TPSMValidationError(f"{herb.name} ({enz}): kinact must be non-negative, got {pathway.kinact_h}")

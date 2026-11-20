@@ -74,7 +74,7 @@
   {
     "source": "Berberine",
     "target": "Metformin",
-    "enzyme": "organic cation transporter 1",
+    "enzyme": "OCT1",
     "effect": "possible altered glucose-lowering exposure",
     "severity": "moderate",
     "source_reference": "Verify transporter evidence and glucose monitoring guidance."
