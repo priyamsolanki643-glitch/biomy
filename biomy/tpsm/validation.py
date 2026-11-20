@@ -44,10 +44,41 @@ class SimulationValidator:
             ):
                 raise TPSMValidationError(f"{drug.name}: inter-compartment clearance Q must be positive")
 
+        # Validate therapeutic and toxicity thresholds
+        if drug.therapeutic_min_mg_l is not None:
+            if not isfinite(drug.therapeutic_min_mg_l) or drug.therapeutic_min_mg_l <= 0:
+                raise TPSMValidationError(f"{drug.name}: therapeutic_min_mg_l must be strictly positive, got {drug.therapeutic_min_mg_l}")
+        if drug.toxicity_threshold_mg_l is not None:
+            if not isfinite(drug.toxicity_threshold_mg_l) or drug.toxicity_threshold_mg_l <= 0:
+                raise TPSMValidationError(f"{drug.name}: toxicity_threshold_mg_l must be strictly positive, got {drug.toxicity_threshold_mg_l}")
+        if drug.therapeutic_min_mg_l is not None and drug.toxicity_threshold_mg_l is not None:
+            if drug.therapeutic_min_mg_l >= drug.toxicity_threshold_mg_l:
+                raise TPSMValidationError(
+                    f"{drug.name}: therapeutic_min_mg_l ({drug.therapeutic_min_mg_l}) must be strictly less than toxicity_threshold_mg_l ({drug.toxicity_threshold_mg_l})"
+                )
+
         # Validate fractions metabolized
+        for enz, fm_val in drug.fm_pathways.items():
+            if not isfinite(fm_val) or fm_val < 0.0:
+                raise TPSMValidationError(f"{drug.name}: fm pathway '{enz}' must be non-negative, got {fm_val}")
         fm_sum = sum(drug.fm_pathways.values())
         if fm_sum > 1.0001:
             raise TPSMValidationError(f"{drug.name}: sum of fm pathways exceeds 1.0 (got {fm_sum})")
+
+    @staticmethod
+    def validate_compounds(drugs: Iterable[DrugParameters], herbs: Iterable[HerbParameters] = ()) -> None:
+        """Validate uniqueness of compound names across drugs and herbs."""
+        seen_names: set[str] = set()
+        for d in drugs:
+            d_name = d.name.strip().lower()
+            if d_name in seen_names:
+                raise TPSMValidationError(f"Duplicate compound name '{d.name}' detected in drugs")
+            seen_names.add(d_name)
+        for h in herbs:
+            h_name = h.name.strip().lower()
+            if h_name in seen_names:
+                raise TPSMValidationError(f"Duplicate compound name '{h.name}' detected across drugs and herbs")
+            seen_names.add(h_name)
 
     @staticmethod
     def validate_herb(herb: HerbParameters) -> None:

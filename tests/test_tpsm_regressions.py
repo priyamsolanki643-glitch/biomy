@@ -1,5 +1,6 @@
 """Regression and dynamic physiological recovery tests."""
 
+import numpy as np
 import pytest
 from biomy.tpsm.engine import TPSMEngine
 from biomy.tpsm.events import DoseEvent
@@ -11,7 +12,9 @@ from biomy.tpsm.models import (
     ParameterStatus,
     PathwayType,
     ProvenanceRecord,
+    TPSMValidationError,
 )
+from biomy.tpsm.parameters import ParameterCatalog
 from biomy.tpsm.serialization import TPSMSerializer
 
 
@@ -130,3 +133,130 @@ def test_biomistral_serializer_structure(mbi_system):
 
     prompt = TPSMSerializer.to_formatted_prompt(res)
     assert "BIOMY DETERMINISTIC TPSM FACT MATRIX" in prompt
+
+
+def test_dose_at_duration_h_is_applied_and_logged():
+    """Verify doses scheduled at t = duration_h are correctly applied and logged."""
+    drug = DrugParameters(
+        name="BoundaryDrug",
+        bioavailability=1.0,
+        ka_h=1.0,
+        volume_central_l=10.0,
+        clearance_l_h=1.0,
+    )
+    engine = TPSMEngine([drug])
+    res = engine.simulate([DoseEvent("BoundaryDrug", 100.0, 24.0)], duration_h=24.0)
+
+    # Event log must record the dose at t=24h
+    assert len(res.event_log) == 1
+    assert res.event_log[0]["time_h"] == 24.0
+    assert res.event_log[0]["dose_mg"] == 100.0
+    # The final point in time_points must be 24.0
+    assert res.time_points[-1] == 24.0
+
+
+def test_genetic_baseline_remains_stable_without_inhibitor():
+    """Verify that genetic poor metabolizer baselines do not spontaneously revert to wild-type."""
+    drug = DrugParameters(
+        name="PolymorphicDrug",
+        bioavailability=1.0,
+        ka_h=1.0,
+        volume_central_l=10.0,
+        clearance_l_h=1.0,
+        fm_pathways={"CYP2C9": 0.8},
+    )
+    # Set genetic baseline to 50% capacity (e.g. *2/*3 intermediate/poor metabolizer)
+    engine = TPSMEngine([drug], enzyme_baseline={"CYP2C9": 0.5})
+    res = engine.simulate([], duration_h=168.0, step_h=1.0)
+
+    cyp2c9_curve = res.enzyme_activity_curves["CYP2C9"]
+    # The enzyme activity must stay at 0.5 across the entire 168-hour horizon
+    for val in cyp2c9_curve:
+        assert np.isclose(val, 0.5, atol=1e-4)
+
+
+def test_catalog_enzyme_recovery_halflife_used_from_herb():
+    """Verify that catalog-defined enzyme recovery half-lives are prioritized over the default."""
+    catalog = ParameterCatalog.from_json_file()
+    drug = catalog.get_drug("Warfarin")
+    herb = catalog.get_herb("Piperine")
+    engine = TPSMEngine([drug], [herb])
+
+    # Piperine in catalog defines CYP3A4 recovery_half_life_h = 28.9h
+    expected_kdeg_cyp3a4 = np.log(2.0) / 28.9
+    assert np.isclose(engine.enzyme_kdeg["CYP3A4"], expected_kdeg_cyp3a4, rtol=1e-4)
+
+    # Piperine in catalog defines CYP2C9 recovery_half_life_h = 38.0h
+    expected_kdeg_cyp2c9 = np.log(2.0) / 38.0
+    assert np.isclose(engine.enzyme_kdeg["CYP2C9"], expected_kdeg_cyp2c9, rtol=1e-4)
+
+
+def test_degenerate_interval_solver_resilience():
+    """Verify that degenerate and closely spaced events do not cause IndexError or solver crashes."""
+    drug = DrugParameters(
+        name="StiffDrug",
+        bioavailability=1.0,
+        ka_h=2.0,
+        volume_central_l=10.0,
+        clearance_l_h=1.0,
+    )
+    engine = TPSMEngine([drug])
+    # Doses spaced by zero-duration or tiny delta
+    events = [
+        DoseEvent("StiffDrug", 50.0, 0.0),
+        DoseEvent("StiffDrug", 50.0, 12.0),
+        DoseEvent("StiffDrug", 50.0, 12.0),  # Exact duplicate timestamp
+        DoseEvent("StiffDrug", 50.0, 24.0),
+    ]
+    res = engine.simulate(events, duration_h=24.0, step_h=0.5)
+    assert res.solver_success is True
+    assert len(res.time_points) >= 2
+
+
+def test_validation_rejects_inverted_therapeutic_thresholds():
+    """Verify validation rejects therapeutic_min_mg_l >= toxicity_threshold_mg_l."""
+    drug = DrugParameters(
+        name="InvertedDrug",
+        bioavailability=1.0,
+        ka_h=1.0,
+        volume_central_l=10.0,
+        clearance_l_h=1.0,
+        therapeutic_min_mg_l=20.0,
+        toxicity_threshold_mg_l=10.0,  # Inverted!
+    )
+    with pytest.raises(TPSMValidationError, match="strictly less than"):
+        TPSMEngine([drug])
+
+
+def test_validation_rejects_negative_fm_pathways():
+    """Verify validation rejects negative individual fm pathways."""
+    drug = DrugParameters(
+        name="NegativeFmDrug",
+        bioavailability=1.0,
+        ka_h=1.0,
+        volume_central_l=10.0,
+        clearance_l_h=1.0,
+        fm_pathways={"CYP3A4": -0.2, "CYP2C9": 0.8},
+    )
+    with pytest.raises(TPSMValidationError, match="must be non-negative"):
+        TPSMEngine([drug])
+
+
+def test_validation_rejects_duplicate_compound_names():
+    """Verify validation rejects duplicate compound names in drugs and herbs."""
+    drug1 = DrugParameters(name="DuplicateName", volume_central_l=10.0, clearance_l_h=1.0)
+    drug2 = DrugParameters(name="DuplicateName", volume_central_l=20.0, clearance_l_h=2.0)
+    with pytest.raises(TPSMValidationError, match="Duplicate compound name"):
+        TPSMEngine([drug1, drug2])
+
+
+def test_simulation_rejects_invalid_step_h():
+    """Verify engine.simulate rejects negative, zero, or excessive step_h."""
+    drug = DrugParameters(name="StepDrug", volume_central_l=10.0, clearance_l_h=1.0)
+    engine = TPSMEngine([drug])
+    with pytest.raises(TPSMValidationError, match="step_h must be finite and positive"):
+        engine.simulate([], duration_h=24.0, step_h=-0.5)
+    with pytest.raises(TPSMValidationError, match="step_h must be finite and positive"):
+        engine.simulate([], duration_h=24.0, step_h=0.0)
+    with pytest.raises(TPSMValidationError, match="cannot exceed duration_h"):
+        engine.simulate([], duration_h=24.0, step_h=48.0)

@@ -96,7 +96,12 @@ class EventTimelineProcessor:
 
         # If an event exists exactly at duration_h
         if duration_h in doses_by_time:
-            # Add an instantaneous final boundary impulse record
-            pass
+            segments.append(
+                EventSegment(
+                    t_start=duration_h,
+                    t_end=duration_h,
+                    doses_at_start=doses_by_time[duration_h],
+                )
+            )
 
         return segments

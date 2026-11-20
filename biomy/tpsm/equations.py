@@ -72,21 +72,28 @@ class PKPDEquations:
         self,
         layout: StateLayout,
         enzyme_kdeg: Optional[Dict[str, float]] = None,
+        enzyme_baseline: Optional[Dict[str, float]] = None,
     ):
         self.layout = layout
         self.drugs = layout.drugs
         self.herbs = layout.herbs
         self.enzymes = layout.enzymes
         self.mode = layout.compartment_mode
+        self.enzyme_baseline = enzyme_baseline or {}
 
         # Enzyme degradation rate constants k_deg (1/h)
         # Default turnover half-life ~ 36h -> k_deg = ln(2)/36 ~ 0.01925 1/h
         self.k_deg = np.zeros(layout.n_e, dtype=np.float64)
+        self.e_base = np.ones(layout.n_e, dtype=np.float64)
         for i, enz in enumerate(self.enzymes):
             if enzyme_kdeg and enz in enzyme_kdeg:
                 self.k_deg[i] = enzyme_kdeg[enz]
             else:
                 self.k_deg[i] = log(2.0) / 36.0
+            if enzyme_baseline and enz in enzyme_baseline:
+                self.e_base[i] = float(np.clip(enzyme_baseline[enz], 0.0, 1.0))
+            else:
+                self.e_base[i] = 1.0
 
     def rhs(self, t: float, y: np.ndarray) -> np.ndarray:
         """Compute system derivative dy/dt."""
@@ -132,7 +139,8 @@ class PKPDEquations:
                     k_obs_sum += (pathway.kinact_h * iu) / (pathway.ki_u_mbi_mg_l + iu)
 
             kdeg = self.k_deg[j]
-            dy[layout.idx_e + j] = kdeg * (1.0 - e_rel[j]) - k_obs_sum * e_rel[j]
+            ebase = self.e_base[j]
+            dy[layout.idx_e + j] = kdeg * (ebase - e_rel[j]) - k_obs_sum * e_rel[j]
 
         # Map enzyme name to relative activity
         enz_map = {enz: e_rel[j] for j, enz in enumerate(self.enzymes)}

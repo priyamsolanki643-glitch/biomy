@@ -26,7 +26,18 @@ class PKMetricsCalculator:
         """Calculate peak (Cmax) and trough (Cmin) concentration."""
         if len(concentrations) == 0:
             return 0.0, 0.0
-        return float(np.max(concentrations)), float(np.min(concentrations))
+        c_max = float(np.max(concentrations))
+        if c_max <= 0.0:
+            return 0.0, 0.0
+
+        # Compute trough concentration (excluding initial unexposed t=0 baseline)
+        active_indices = np.where(concentrations > 1e-4 * c_max)[0]
+        if len(active_indices) > 0:
+            first_active = active_indices[0]
+            c_min = float(np.min(concentrations[first_active:]))
+        else:
+            c_min = float(np.min(concentrations))
+        return c_max, c_min
 
     @staticmethod
     def calculate_tmr_curve(

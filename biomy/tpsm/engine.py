@@ -1,5 +1,6 @@
 """High-level simulation orchestrator for the Temporal Pharmacokinetic State Machine."""
 
+from math import isfinite
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 import numpy as np
 
@@ -38,7 +39,8 @@ class TPSMEngine:
         self.enzyme_baseline = enzyme_baseline or {}
         self.enzyme_kdeg: Dict[str, float] = {}
 
-        # Validate all drug and herb parameters upfront
+        # Validate all drug and herb parameters and unique names upfront
+        SimulationValidator.validate_compounds(self.drugs, self.herbs)
         for d in self.drugs:
             SimulationValidator.validate_drug(d, compartment_mode)
         for h in self.herbs:
@@ -55,8 +57,16 @@ class TPSMEngine:
 
         # Set up enzyme turnover k_deg (1/h)
         for enz in self.enzymes:
-            hl = (enzyme_recovery_halflives or {}).get(enz, 36.0)
-            self.enzyme_kdeg[enz] = np.log(2.0) / max(1.0, hl)
+            hl = (enzyme_recovery_halflives or {}).get(enz)
+            if hl is None:
+                for h in self.herbs:
+                    p = h.pathway_effects.get(enz)
+                    if p and p.recovery_half_life_h and p.recovery_half_life_h > 0:
+                        hl = p.recovery_half_life_h
+                        break
+            if hl is None:
+                hl = 36.0
+            self.enzyme_kdeg[enz] = np.log(2.0) / max(1.0, float(hl))
 
         self.layout = StateLayout(
             drugs=self.drugs,
@@ -68,6 +78,7 @@ class TPSMEngine:
         self.equations = PKPDEquations(
             layout=self.layout,
             enzyme_kdeg=self.enzyme_kdeg,
+            enzyme_baseline=self.enzyme_baseline,
         )
 
         self.solver = ODESolverWrapper(method=solver_method)
@@ -81,6 +92,12 @@ class TPSMEngine:
         """
         Execute deterministic timeline simulation across discrete dose events.
         """
+        # Validate step_h
+        if not isfinite(step_h) or step_h <= 0:
+            raise TPSMValidationError(f"step_h must be finite and positive: got {step_h}")
+        if step_h > duration_h:
+            raise TPSMValidationError(f"step_h ({step_h}h) cannot exceed duration_h ({duration_h}h)")
+
         # 1. Validate events
         known_names = set(d.name.lower() for d in self.drugs) | set(h.name.lower() for h in self.herbs)
         sorted_events = EventTimelineProcessor.validate_events(events, duration_h, known_names)
@@ -166,6 +183,8 @@ class TPSMEngine:
 
             # Append trajectory (avoid duplicating segment boundary point)
             if all_times and len(t_eval) > 0 and abs(t_eval[0] - all_times[-1]) < 1e-9:
+                if seg.doses_at_start:
+                    all_states[-1] = y_eval[:, 0].copy()
                 t_eval = t_eval[1:]
                 y_eval = y_eval[:, 1:]
 
@@ -173,14 +192,18 @@ class TPSMEngine:
                 all_times.append(float(t_pt))
                 all_states.append(y_pt.copy())
 
-            # Advance current state to end of segment
-            y_current = y_eval[:, -1].copy()
+            # Advance current state to end of segment safely
+            if y_eval.shape[1] > 0:
+                y_current = y_eval[:, -1].copy()
             last_successful_time = seg.t_end
 
         # If zero events were provided or t_eval was empty, ensure at least [0, duration] points
         if not all_times:
             all_times = [0.0, duration_h]
             all_states = [y_current, y_current]
+        elif len(all_times) == 1:
+            all_times.append(duration_h)
+            all_states.append(y_current.copy())
 
         time_array = np.array(all_times, dtype=np.float64)
         state_matrix = np.array(all_states, dtype=np.float64)  # Shape: [N_points, Total_vars]
